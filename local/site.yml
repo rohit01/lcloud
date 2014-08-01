@@ -1,0 +1,63 @@
+---
+- hosts: local
+  gather_facts: yes
+  user: rohit
+  sudo: yes
+  vars:
+    apt_cache_time: "86400"
+    home_directory: "/home/rohit"
+
+  tasks:
+    - name: Add hipchat apt repository
+      copy: >
+        src="atlassian-hipchat.list"
+        dest="/etc/apt/sources.list.d/atlassian-hipchat.list"
+
+    - name: Add hipchat apt-key
+      apt_key: >
+        url="https://www.hipchat.com/keys/hipchat-linux.key"
+        state="present"
+
+    - name: Install required packages through apt
+      apt: >
+        name="{{ item }}"
+        update_cache=yes
+        cache_valid_time="{{ apt_cache_time }}"
+        state="latest"
+      with_items:
+        - git
+        - terminator
+        - chromium-browser
+        - qemu-kvm
+        - virt-manager
+        - python-dev
+        - python-pip
+        - htop
+        - vlc
+        - xchat
+        - firefox
+        - gimp
+        - vim
+        - bash-completion
+        - curl
+        - hipchat
+
+- name: Install virtualenv
+  pip: name="virtualenv" state="latest"
+
+- name: Create a local virtualenv - only for basic purposes
+  pip: >
+    virtualenv_site_packages=no
+    name="ipython"
+    virtualenv="{{ home_directory }}/venv"
+    state="latest"
+
+
+# Pending
+# skype
+# google-chrome
+# Dropbox
+# Sublime
+
+# ---Dev---
+# vim git htop bash-completion ca-certificates curl libcurl3 libidn11 libruby libssh2-1 openssl curl rsync parted gcc build-essential terminator python-dev
